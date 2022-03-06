@@ -131,8 +131,13 @@ if __name__ == '__main__':
     parser.add_argument(
         'src', type=str, help='path to source .gltf. All referred files must be placed in the same directory')
     parser.add_argument('dst', type=str, help='path to output .glb')
+    parser.add_argument("--src_dir",
+                        help="directory containing .bin and textures")
     args = parser.parse_args()
-    src_dir = os.path.dirname(args.src)
+    if args.src_dir:
+        src_dir = args.src_dir
+    else:
+        src_dir = os.path.dirname(args.src)
     gltf = loadGltf(args.src, src_dir)
     glb = gltf2glb(gltf)
     with open(args.dst, 'wb') as fp:

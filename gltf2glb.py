@@ -107,10 +107,8 @@ def gltf2glb(gltf):
     if 'uri' in gltf['json']['buffers'][0]:
         del gltf['json']['buffers'][0]['uri']
 
-    json_hader = 0x4E4F534A  # 0x4E4F534A	-> "JSON" in ASCII
+    json_hader = 0x4E4F534A  # 0x4E4F534A -> "JSON" in ASCII
     json_string = json.dumps(gltf['json'])
-    with open('tmp.json', 'w') as fp:
-        fp.write(json_string)
     json_data = bytes(json_string, encoding='utf-8')
     json_chunk, _ = addHeaderAndPadding(json_data, json_hader)
 

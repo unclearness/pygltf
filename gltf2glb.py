@@ -52,15 +52,15 @@ def addHeaderAndPadding(data, header):
         raise Exception()
     padchar_byte = (padchar).to_bytes(
         1, byteorder=sys.byteorder, signed=False)  # TODO: singed is True?
-
-    chunk_size_bytes = (before_padded_size + padding_num - 8).to_bytes(
+    chunk_size = before_padded_size + padding_num - 8
+    chunk_size_bytes = (chunk_size).to_bytes(
         4, byteorder=sys.byteorder, signed=False)  # With padding but without size/header size (-8)
     header_bytes = (header).to_bytes(
         4, byteorder=sys.byteorder, signed=False)
     for _ in range(padding_num):
         data = data + padchar_byte
     combined = chunk_size_bytes + header_bytes + data
-    return combined, before_padded_size
+    return combined, chunk_size
 
 
 def gltf2glb(gltf):
@@ -100,10 +100,10 @@ def gltf2glb(gltf):
     gltf['json']['bufferViews'] = bvs
 
     bin_header = 0x004E4942  # 0x004E4942 -> "BIN" in ASCII
-    bin_chunk, bin_before_padded_size = addHeaderAndPadding(
+    bin_chunk, bin_body_size = addHeaderAndPadding(
         gltf['bin'], bin_header)
 
-    gltf['json']['buffers'][0]['byteLength'] = bin_before_padded_size
+    gltf['json']['buffers'][0]['byteLength'] = bin_body_size
     if 'uri' in gltf['json']['buffers'][0]:
         del gltf['json']['buffers'][0]['uri']
 
